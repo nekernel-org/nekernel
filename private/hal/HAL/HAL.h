@@ -32,7 +32,7 @@ enum : SInt64 { kAuthLevelInvalid, kAuthLevelHigh = 100, kAuthLevelMid, kAuthLev
 /// @brief Entry structure of the HAL dispatch table.
 /// @authors Amlal El Mahrouss (amlal@nekernel.org, amlal@ne-app.eu)
 
-struct HAL_CALL_ENTRY HAL_FINAL {
+struct PACKED ALIGN(8) HAL_CALL_ENTRY HAL_FINAL {
   UInt64        fHash{};
   Bool          fActive{};
   hal_proc_type fProc;
@@ -45,8 +45,8 @@ struct HAL_CALL_ENTRY HAL_FINAL {
 };
 
 #ifdef __cplusplus
-EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type, const UInt64&, const UInt64& hash);
-EXTERN_C Void hali_remove_entry(const UInt64& hash);
+EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type, const UInt64, const UInt64 hash);
+EXTERN_C Void hali_remove_entry(const UInt64 hash);
 #else
 EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type, const UInt64, const SInt64 hash);
 EXTERN_C Void hali_remove_entry(const SInt64 hash);

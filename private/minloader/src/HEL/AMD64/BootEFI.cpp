@@ -116,6 +116,8 @@ STATIC Void boot_scan_memory(HEL::BootInfoHeader* handover_hdr, UIntPtr* out_map
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
 EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTable* sys_table) {
+  if (!image_handle || !sys_table) return kEfiFail;
+
   fw_init_efi(sys_table);  ///! Init the EFI library.
 
   ST->ConOut->ClearScreen(sys_table->ConOut);
@@ -135,7 +137,9 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
     Boot::Stop();
   }
 
-  writer.Write("BootZ: The NeKernel Loader. Copyright 2024-2026, Amlal El Mahrouss and al.\r");
+  writer.Write("BootZ: The Ne.app NeKernel Loader. Copyright 2024-2026, Amlal El Mahrouss, Ne.app et al.\r");
+
+  STATIC Bool kAcpiDetectedMandatory = FALSE;
 
   for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries; ++index_vt) {
     Char* vendor_table =
@@ -146,8 +150,14 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
         vendor_table[3] == ' ' && vendor_table[4] == 'P' && vendor_table[5] == 'T' &&
         vendor_table[6] == 'R' && vendor_table[7] == ' ') {
       handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr) vendor_table;
+      kAcpiDetectedMandatory                     = YES;
       break;
     }
+  }
+
+  if (!kAcpiDetectedMandatory) {
+    writer.Write("BootZ: Starting from NeSystem v1.6+. ACPI is required to boot on UEFI.\r");
+    Boot::Stop();
   }
 
   // ------------------------------------------ //
@@ -189,9 +199,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   }
 
   // Fill handover header now.
-
-  handover_hdr->f_BitMapStart = nullptr; /* Start of bitmap. */
-  handover_hdr->f_BitMapSize  = 0UL;     /* Size of bitmap in bytes. */
 
   boot_scan_memory(handover_hdr, &map_key);
 
@@ -246,12 +253,9 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   reader_memtest.ReadAll(0);
 
   if (reader_memtest.Blob()) {
-    auto memtest_thread = new Boot::BootThread(reader_memtest.Blob());
-
-    if (memtest_thread) {
-      memtest_thread->SetName("MemoryTest");
-      memtest_thread->Start(handover_hdr, NO);
-    }
+    auto memtest_thread = Boot::BootThread(reader_memtest.Blob());
+    memtest_thread.SetName("MemoryTest");
+    memtest_thread.Start(handover_hdr, NO);
   }
 
   WideChar kernel_path[256U] = L"vmoskrnl.exe";

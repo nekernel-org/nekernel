@@ -6,8 +6,9 @@
 #include <SystemKit/System.h>
 #include <modules/CDFS/CDFS.h>
 
-/// @brief ANT and NeSystem CDFS driver.
+/// @brief ANT and NeAnt CDFS driver.
 /// @note Uses the Shims framework for that matter.
 
+/// AMLALE: This is driver related, of course CDFS specs are different.
 struct CDFS_PRIV_CONFIG_HDR;
 struct CDFS_PRIV_HDR;

@@ -17,11 +17,21 @@
 #define ATTRIBUTE(X) __attribute__((X))
 #endif
 
+#ifndef __THREAD_SAFE
 #define __THREAD_SAFE ATTRIBUTE(thread_safe)
-#define __THREAD_UNSAFE ATTRIBUTE(thread_unsafe)
+#endif
 
+#ifndef __THREAD_UNSAFE
+#define __THREAD_UNSAFE ATTRIBUTE(thread_unsafe)
+#endif
+
+#ifdef __cplusplus
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C extern "C"
+#else
+#define IMPORT_CXX extern
+#define IMPORT_C extern
+#endif
 
 #ifdef __cplusplus
 #ifndef _FINAL

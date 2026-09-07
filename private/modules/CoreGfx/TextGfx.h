@@ -149,6 +149,8 @@ inline Ne::Kernel::Void cg_render_string_for_bitmap(const Ne::Kernel::UInt8* bit
                                                 const Ne::Kernel::SizeT x_sz, const Ne::Kernel::SizeT y_sz,
                                                 Ne::Kernel::Int32& x_dst, Ne::Kernel::Int32& y_dst,
                                                 Ne::Kernel::Int32& color) {
+  if (!bitmap) return;
+
   Ne::Kernel::SizeT x, y;
   Ne::Kernel::SizeT set;
 
@@ -169,11 +171,15 @@ inline Ne::Kernel::Void cg_render_string_for_bitmap(const Ne::Kernel::UInt8* bit
 
 inline Ne::Kernel::Void cg_render_string(const Ne::Kernel::Char* text, Ne::Kernel::Int32 x_dst,
                                      Ne::Kernel::Int32 y_dst, Ne::Kernel::Int32 color) {
+  if (!text) return;
+
 #ifndef __BOOTZ__
   auto len = Ne::Kernel::rt_string_len(text);
 #else
   auto len = StrLen(text);
 #endif
+
+  if (len == 0) return;
 
   for (Ne::Kernel::SizeT i = 0; i < len; ++i) {
     cg_render_string_for_bitmap(&kFontBitmap[(Ne::Kernel::UInt8) text[i]][0], kFontSizeX, kFontSizeY,

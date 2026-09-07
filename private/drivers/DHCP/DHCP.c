@@ -6,10 +6,16 @@
 #include <SystemKit/System.h>
 #include <modules/DHCP/DHCP.h>
 
-/// @brief NeSystem and ANT DHCP driver.
+/// @brief NeSystem and Ant DHCP driver.
 /// @note This driver is used to only connect using a DHCP host behind the workstation. To avoid
 /// nightmare scenarios that could have been avoided.
 
 /// @brief Implemented in driver to implement driver.
 struct DHCP_PRIV_CONFIG_HDR;
 struct DHCP_PRIV_HDR;
+
+/// @note Output file name is DHCP.sys
+
+DDK_EXTERN Void KDriverMain(Void) {
+  return;
+}

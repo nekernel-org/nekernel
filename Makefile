@@ -1,8 +1,8 @@
 # Kernel release name and product name.
 
-RELEASE_NAME=Big Navajo
+RELEASE_NAME=Big Hole
 RELEASE_PRODUCT=Ne.app.NeKernel
-RELEASE_VERSION=v1.0.0
+RELEASE_VERSION=v1.0.1
 
 .PHONY: all
 all:

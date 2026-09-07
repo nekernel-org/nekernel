@@ -11,6 +11,7 @@
     "../minloader/src/BootTextWriter.cpp",
     "../minloader/src/BootSupport.cpp",
     "../minloader/src/New+Delete.cpp",
+    "../minkernel/HALKit/Generic/*.cpp",
     "../minkernel/HALKit/AMD64/PCI/*.cpp",
     "../minkernel/HALKit/AMD64/Storage/*.cpp",
     "../minkernel/HALKit/AMD64/Network/*.cpp",

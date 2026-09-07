@@ -11,7 +11,6 @@ namespace Ne::Kernel {
 /// @brief SMM Internal swap disk check function.
 EXTERN_C Bool smmi_check_swap_dsk(const struct SwapDiskHdr* hdr) {
   if (hdr && hdr->fBlobSz > 0) return YES;
-
   return NO;
 }
 

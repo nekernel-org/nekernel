@@ -16,7 +16,7 @@ NeKernel is not open to new contributors, unless you contributed to similar Ne.a
 <a href="https://github.com/ne-app-eu/krnl/actions/workflows/libddk-build.yml/badge.svg"><img src="https://github.com/ne-app-eu/krnl/actions/workflows/libddk-build.yml/badge.svg?style=for-the-badge" alt="CI 3"></a>
 <a href="https://github.com/ne-app-eu/krnl/actions/workflows/libsystem-build.yml/badge.svg"><img src="https://github.com/ne-app-eu/krnl/actions/workflows/libsystem-build.yml/badge.svg?style=for-the-badge" alt="CI 4"></a>
 
-The Modular Operating System module of NeSystem.
+The Modular Operating System Kernel module of NeAnt.
 
 ## Getting Started
 
@@ -25,17 +25,17 @@ The Modular Operating System module of NeSystem.
 - [MinGW](https://www.mingw-w64.org/)
 - [Clang](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
-- [NeBuild](https://github.com/ne-app-eu/bld)
+- [NeBuild](https://github.com/ne-app-open/bld)
 - CoreUtils
 - [Git](https://git-scm.com/)
-- [NCC](https://github.com/ne-app-eu/ncc)
+- [NCC](https://github.com/ne-app-open/ncc)
 
 ### **Building & Running**
 
 Please fork, and clone the repository. Then follow those steps:
 
 ```sh
-git clone -j8 https://github.com/ne-app-eu/krnl.git
+git clone -j8 https://github.com/ne-app-open/krnl.git
 cd krnl
 ./scripts/setup_x64_project.sh
 ./scripts/modules_ahci_x64.sh

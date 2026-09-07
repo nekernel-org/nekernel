@@ -33,6 +33,7 @@ SInt32 _NeMain(SInt32 argc, Char** argv) {
                            MmStrLen("-diutil-sector-size") == 0)) {
       if ((arg + 1) < argc) {
         kDiskSectorSz = StrMathToNumber(argv[arg + 1], nullptr, 10);
+        MUST_PASS(kDiskSectorSz);
       }
     } else if (MmCmpMemory((VoidPtr) arg_s, (VoidPtr) "-diutil-part-name",
                            MmStrLen("-diutil-part-name") == 0)) {
@@ -45,6 +46,8 @@ SInt32 _NeMain(SInt32 argc, Char** argv) {
   // create disk image, by appending an EPM partition to it.
 
   DI::DI_DISK_IMAGE img{};
+
+  MUST_PASS(kDiskSz);
 
   img.disk_sz   = kDiskSz;
   img.sector_sz = kDiskSectorSz;

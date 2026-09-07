@@ -264,7 +264,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
   EPM_PART_BLOCK* epm_boot = (EPM_PART_BLOCK*) RTL_ALLOCA(sizeof(EPM_PART_BLOCK));
 
   const auto kFsName    = "Ne";
-  const auto kBlockName = " NeKernel";
+  const auto kBlockName = " NeAnt";
 
   epm_boot->FsVersion = 0;
   epm_boot->LbaStart  = sizeof(EPM_PART_BLOCK);
@@ -315,16 +315,24 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
 
   gpt_part->Revision = 0x00010000;
 
-  gpt_part->StartingLBA         = 0x00000000;
-  gpt_part->NumPartitionEntries = 0x00000000;
+  /// 0: EFI
+  /// 1: BOOTMGR
+  /// 2: SYSTEM
+  constexpr auto kNumPartCnt = 3;
+  constexpr auto kStartingLba = 1024;
+
+  gpt_part->StartingLBA         = kStartingLba;
+  gpt_part->NumPartitionEntries = kNumPartCnt;
+  
+  /// To be computed
   gpt_part->SizeOfEntries       = 0x00000000;
   gpt_part->CRC32PartEntry      = 0x00000000;
 
   SetMem(gpt_part->Reserved2, 0, kSectorAlignGPT_PartTbl);
 
   fDiskDev.Leak().mBase = kGPTPartitionTableLBA;  // always always resies at zero block.
-
   fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_TABLE);
+
   fDiskDev.Write((Char*) gpt_part, sizeof(GPT_PARTITION_TABLE));
 
   BootTextWriter writer;

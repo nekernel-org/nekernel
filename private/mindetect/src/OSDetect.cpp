@@ -10,7 +10,7 @@ EXTERN_C Int32 OSDetectModuleMain(Ne::Kernel::HEL::BootInfoHeader* handover) {
       handover->f_FirmwareCustomTables[Ne::Kernel::HEL::kHandoverTableST]));
 
   if (handover->f_HardwareTables.f_MultiProcessingEnabled == NO) return kEfiFail;
-  if (handover->f_NumberOfProcessors < 2LL) return kEfiFail;
+  if (handover->f_NumberOfProcessors < 1ULL) return kEfiFail;
   if (handover->f_BitMapSize < 1LL) return kEfiFail;
   if (handover->f_FirmwareVendorLen < 1LL) return kEfiFail;
 

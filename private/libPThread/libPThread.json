@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../libSystem", "../libPOSIX", "../", "./"],
   "sources_path": ["src/*.cpp"],
-  "output_name": "libPThread.dll",
+  "output_name": "PThread.dll",
   "compiler_flags": [
     "-ffreestanding",
     "-shared",

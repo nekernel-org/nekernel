@@ -9,8 +9,9 @@
 
 using Ne::Kernel::HAL::kRegisteredSystemCalls;
 
-EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64& level, const UInt64& hash) {
+EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64 level, const UInt64 hash) {
   if (!hash) return -1;
+  if (!proc) return -1;
 
   STATIC BOOL kLocked = NO;
 
@@ -33,7 +34,7 @@ EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64& level, con
   return -1;
 }
 
-EXTERN_C Void hali_remove_entry(const UInt64& hash) {
+EXTERN_C Void hali_remove_entry(const UInt64 hash) {
   if (!hash) return;
 
   STATIC BOOL kLocked = NO;

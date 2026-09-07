@@ -12,8 +12,10 @@
 using namespace System;
 
 IMPORT_C Void _rtl_assert(Bool expr, const Char* origin) {
+#ifndef _NDEBUG
   if (!expr) {
     PrintOut(nullptr, "Assertion failed: %s\r", origin ? origin : "");
     nesys_syscall_arg_1(SYSCALL_HASH("_rtl_debug_break"));
   }
+#endif
 }

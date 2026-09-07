@@ -18,10 +18,6 @@
 
 /** Graphics related. */
 
-STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
-STATIC UInt16                     kGopStride = 0U;
-STATIC EFI_GUID                   kGopGuid;
-
 EXTERN_C Void rt_reset_hardware();
 
 EXTERN EfiBootServices* BS;
@@ -29,7 +25,12 @@ EXTERN EfiBootServices* BS;
 /**
   @brief Finds and stores the GOP object.
 */
-STATIC Bool boot_init_fb() {
+#ifdef BOOTZ_USE_FB
+STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
+STATIC UInt16                     kGopStride = 0U;
+STATIC EFI_GUID                   kGopGuid;
+
+STATIC Bool boot_init_fb(Void) {
   kGopGuid = EFI_GUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop     = nullptr;
 
@@ -39,6 +40,7 @@ STATIC Bool boot_init_fb() {
 
   return Yes;
 }
+#endif
 
 EFI_GUID kEfiGlobalNamespaceVarGUID = {
     0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
@@ -50,6 +52,8 @@ EXTERN EfiBootServices* BS;
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
 EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTable* sys_table) {
+  if (!image_handle || !sys_table) return kEfiFail;
+
   fw_init_efi(sys_table);  ///! Init the EFI library.
 
   kHandoverHeader = new HEL::BootInfoHeader();

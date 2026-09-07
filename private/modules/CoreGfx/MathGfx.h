@@ -1,14 +1,13 @@
-/* ========================================
-
-  Copyright Amlal El Mahrouss.
-
-======================================== */
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024-2026, Amlal El Mahrouss (amlal@nekernel.org)
+// Licensed under the Apache License, Version 2.0 (see LICENSE file)
+// Official repository: https://github.com/ne-app-eu/krnl
 
 #ifndef COREGFX_MATHGFX_H
 #define COREGFX_MATHGFX_H
 
-/// @file MathMgr.h
-/// @brief Linear interpolation implementation.
+/// @file MathGfx.h
+/// @brief Math module implementation for CoreGfx.
 
 namespace UI {
 #ifdef NE_CORE_GFX_USE_DOUBLE

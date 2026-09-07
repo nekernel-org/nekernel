@@ -49,12 +49,12 @@ DEBUG_MACRO = -D__DEBUG__
 endif
 
 ifeq ($(KVM_SUPPORT),)
-EMU_FLAGS=-M q35 -smp 6 -m 8G \
+EMU_FLAGS=-M q35 -smp 4 -m 1G \
     -bios $(BIOS) -cdrom $(BOOT) -boot d
 endif
 
 ifneq ($(KVM_SUPPORT),)
-EMU_FLAGS=-M q35 -smp 6 -m 8G \
+EMU_FLAGS=-M q35 -smp 4 -m 1G \
     -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm
 endif
 
@@ -164,6 +164,6 @@ help:
 	@echo "epm-img: Format a disk using the Explicit Partition Map."
 	@echo "gpt-img: Format a disk using the Explicit Partition Map."
 	@echo "disk: Format a FAT32 ESP disk."
-	@echo "clean: remove bootloader and files."
+	@echo "clean: Remove bootloader and files."
 	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
 	@echo "run-efi-amd64-<ahci, ata>: Run bootloader. (PC AMD64)"

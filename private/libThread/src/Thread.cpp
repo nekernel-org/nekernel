@@ -6,8 +6,22 @@
 #include <SystemKit/Err.h>
 #include <ThreadKit/Thread.h>
 
+#ifdef kThreadMapMax
+#undef kThreadMapMax
+#endif
+
 #define kThreadMapMax (1024UL)
+
+#ifdef kThreadBaseHash
+#undef kThreadBaseHash
+#endif
+
 #define kThreadBaseHash (0x5555ffff6ULL)
+
+#ifdef kThreadSemID
+#undef kThreadSemID
+#endif
+
 #define kThreadSemID "__NE_RUN_THREAD_HANDLE"
 
 /// @brief The registered thread for a specific process.

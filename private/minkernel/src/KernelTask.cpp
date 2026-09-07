@@ -21,7 +21,9 @@ EXTERN_C Int32 kt_kernel_task_start(HAL::StackFramePtr stack_frame, VoidPtr code
 
   if (!stack_frame || !code)
     ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR, "Ne::Kernel task arguments are invalid");
+
   ((rtl_kstart_kind) (code))(stack_frame);
+
   if (!stack_frame->R8) ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR, "Ne::Kernel task failed to run");
 
   return stack_frame->R8;
@@ -51,11 +53,13 @@ Bool KernelTaskHelper::Start(KernelTask& task_ptr, const KID& kid) {
 }
 
 Bool KernelTaskHelper::CanBeStarted(const KernelTask& task) {
-  return task.StackSize > 0 && task.Image.HasCode() && task.Image.HasImage();
+  if (KernelTaskHelper::IsValid(task)) return YES;
+  return task.StackFrame != nullptr;
 }
 
-Bool KernelTaskHelper::IsValid(KernelTask& task_ref) {
+Bool KernelTaskHelper::IsValid(const KernelTask& task_ref) {
   if (task_ref.StackSize == 0) return NO;
+
   return task_ref.Image.HasImage() && task_ref.Image.HasCode();
 }
 
