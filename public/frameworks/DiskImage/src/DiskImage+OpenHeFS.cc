@@ -12,6 +12,8 @@
 /// @param img disk image structure.
 /// @return Status code upon completion.
 SInt32 DI::DIFormatFilesystemOpenHeFS(struct DI_DISK_IMAGE& img) {
+  /// AMLALE: At least check the sector size.
+  if (img.block_cnt != kDISectorSz) return kDIFailureStatus;
   NE_UNUSED(img);
 
   ::PrintOut(nullptr, "%s",
