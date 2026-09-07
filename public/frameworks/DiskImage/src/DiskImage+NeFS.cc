@@ -13,7 +13,6 @@
 /// @return Status code upon completion.
 SInt32 DI::DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) {
   if (!img.sector_sz || (img.sector_sz % kDISectorSz != 0)) return kDIFailureStatus;
-
   if (*img.out_name == 0 || *img.disk_name == 0) return kDIFailureStatus;
 
   struct ::NEFS_ROOT_PARTITION_BLOCK rpb {};
