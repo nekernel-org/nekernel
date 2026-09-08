@@ -9,16 +9,19 @@
 
 using Ne::Kernel::HAL::kRegisteredSystemCalls;
 
+/// @brief Add a new entry to the HAL system calls table.
 EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64 level, const UInt64 hash) {
   if (!hash) return -1;
   if (!proc) return -1;
 
   STATIC BOOL kLocked = NO;
 
+  // Wait until the lock is released.
   while (kLocked);
 
   kLocked = YES;
 
+  // Calculate the index in the system calls table based on the hash.
   auto i = hash % kMaxDispatchCallCount;
 
   if (i > kMaxDispatchCallCount) return -1;
@@ -34,6 +37,7 @@ EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64 level, cons
   return -1;
 }
 
+/// @brief Remove an entry from the HAL system calls table.
 EXTERN_C Void hali_remove_entry(const UInt64 hash) {
   if (!hash) return;
 
@@ -43,6 +47,7 @@ EXTERN_C Void hali_remove_entry(const UInt64 hash) {
 
   kLocked = YES;
 
+  // Calculate the index in the system calls table based on the hash.
   auto i = hash % kMaxDispatchCallCount;
 
   if (i > kMaxDispatchCallCount) return;

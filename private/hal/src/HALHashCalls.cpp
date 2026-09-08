@@ -12,12 +12,16 @@ EXTERN_C UInt64 hali_hash_fnv64(const Char* path) {
   const UInt64 kFNVSeed  = 0xcbf29ce484222325ULL;
   const UInt64 kFNVPrime = 0x100000001b3ULL;
 
+  // FNV-1a hash algorithm.
   UInt64 hash = kFNVSeed;
 
   while (*path) {
     hash ^= (Char) (*path++);
     hash *= kFNVPrime;
   }
+
+  // Ensure that the hash is not zero, as zero is reserved for invalid entries.
+  MUST_PASS(hash != 0);
 
   return hash;
 }
