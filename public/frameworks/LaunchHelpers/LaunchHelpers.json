@@ -9,7 +9,7 @@
         "./"
     ],
     "sources_path": [],
-    "output_name": "./dist/libLaunchHelpers.fwrk.dylib",
+    "output_name": "./dist/LaunchHelpers.fwrk.dll",
     "cpp_macros": [
         "kSampleFWVersion=0x0100",
         "kSampleFWVersionHighest=0x0100",
