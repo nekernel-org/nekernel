@@ -157,6 +157,10 @@ namespace HAL {
 
   STATIC Detail::IBitMapProxy kBitMapMgr;
 
+  /***********************************************************************************/
+
+  /***********************************************************************************/
+
   auto mm_is_bitmap(VoidPtr ptr) -> BOOL {
     return kBitMapMgr.IsBitMap(ptr);
   }
@@ -183,6 +187,8 @@ namespace HAL {
     if (!ptr) return No;
 
     Bool ret = kBitMapMgr.FreeBitMap(ptr);
+    MUST_PASS(ret);
+
     return ret;
   }
 }  // namespace HAL
