@@ -20,7 +20,7 @@ class KernelTaskHelper;
 
 using KID = ProcessID;
 
-/// @brief Equivalent of UserProcess, but for kernel tasks.
+/// @brief Equivalent of a UserProcess, but for kernel tasks.
 /// @author Amlal
 class KernelTask final {
  public:
@@ -31,7 +31,7 @@ class KernelTask final {
   SizeT              StackSize{kCPSMaxStackSz};
   ProcessImage       Image{};
 
-  /// @brief a KID is a Ne::Kernel ID, it is used to find a task running within the kernel.
+  /// @brief a KID is a Kernel Task ID, it is used to find a task running within the kernel.
   KID Kid{};
 
   NE_NON_VETTABLE;
