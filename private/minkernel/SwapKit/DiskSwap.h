@@ -13,7 +13,7 @@
 #define kSwapPageFilePath "/boot/pagefile.sys"
 #define kSwapPageFilePathU8 u8"/boot/pagefile.sys"
 
-/// @file SwapDisk.h
+/// @file DiskSwap.h
 /// @brief Virtual memory swap disk.
 
 namespace Ne::Kernel {
