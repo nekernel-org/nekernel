@@ -84,7 +84,7 @@ typedef struct PEFContainer final {
   SizeT   HdrSz; /* Size of header */
   SizeT   Count; /* container header count */
   UInt32  Checksum;
-} PACKED PEFContainer;
+} PACKED ALIGN(8) PEFContainer;
 
 /* First PEFCommandHeader starts after PEFContainer */
 
@@ -98,7 +98,7 @@ typedef struct PEFCommandHeader final {
   SizeT   OffsetSize;        /* offset size (physical size inside the file) */
   UIntPtr VMAddress;         /* Virtual Address */
   SizeT   VMSize;            /* Virtual Size */
-} PACKED PEFCommandHeader;
+} PACKED ALIGN(8) PEFCommandHeader;
 
 enum {
   kPefInvalid  = 0x0,
