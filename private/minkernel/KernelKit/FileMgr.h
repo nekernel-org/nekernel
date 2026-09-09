@@ -29,9 +29,14 @@
 
 #define kRestrictR "r"
 #define kRestrictRB "rb"
+
 #define kRestrictW "w"
 #define kRestrictWR "rw"
 #define kRestrictWRB "rwb"
+
+#define kRestrictF "f"
+#define kRestrictWRBF "rwbf"
+#define kRestrictWRF "rwf"
 
 #define kRestrictMax (5U)
 
@@ -86,7 +91,9 @@ struct FILEMGR_STAT final {
   UInt8 fReserved;
 };
 
+#ifndef kFileMgrDirEntResvLen
 #define kFileMgrDirEntResvLen (2)
+#endif
 
 struct FILEMGR_DIRENT final {
   UInt32 fInodeNumber;
@@ -383,9 +390,12 @@ class FileStream final {
     kFileMgrRestrictRead = 100,
     kFileMgrRestrictReadBinary,
     kFileMgrRestrictWrite,
+    kFileMgrRestrictFork,
     kFileMgrRestrictWriteBinary,
     kFileMgrRestrictReadWrite,
+    kFileMgrRestrictReadWriteFork,
     kFileMgrRestrictReadWriteBinary,
+    kFileMgrRestrictReadWriteBinaryFork,
   };
 
  private:
@@ -398,6 +408,16 @@ using FileStreamASCII = FileStream<Char>;
 using FileStreamUTF8  = FileStream<Utf8Char>;
 using FileStreamUTF16 = FileStream<Utf16Char>;
 using FileStreamWide  = FileStream<WideChar>;
+
+#if __FSKIT_DEFAULT_ENCODING__ == __FSKIT_ENCODING_UTF8__
+using FileStreamDefault = FileStreamUTF8;
+#elif __FSKIT_DEFAULT_ENCODING__ == __FSKIT_ENCODING_UTF16__
+using FileStreamDefault = FileStreamUTF16;
+#elif __FSKIT_DEFAULT_ENCODING__ == __FSKIT_ENCODING_WIDE__
+using FileStreamDefault = FileStreamWide;
+#else
+using FileStreamDefault = FileStreamASCII;
+#endif
 
 typedef UInt64 CursorType;
 
