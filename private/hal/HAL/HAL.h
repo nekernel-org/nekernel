@@ -15,6 +15,34 @@
 #define HAL_FINAL final
 #endif
 
+// @brief HAL architecture. This is used to determine the compatibility of the HAL with the kernel.
+
+#ifdef __NE_AMD64__
+
+#ifndef kHalCurrentArchitecture
+#define kHalCurrentArchitecture (0x8664)
+#endif
+
+#ifndef kHalCurrentSubArchitecture
+#define kHalCurrentSubArchitecture (0x0001)
+#endif
+
+#elif defined(__NE_ARM64__)
+
+#ifndef kHalCurrentArchitecture
+#define kHalCurrentArchitecture (0xA864)
+#endif
+
+#ifndef kHalCurrentSubArchitecture
+#define kHalCurrentSubArchitecture (0x0001)
+#endif
+
+#else
+
+#error !!! Unsupported architecture !!!
+
+#endif
+
 #ifdef __cplusplus
 namespace Ne::Kernel::HAL {
 #endif

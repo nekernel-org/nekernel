@@ -6,6 +6,8 @@
 // For FNV hashing.
 #include <hal/HAL/HAL.h>
 
+/// @brief FNV-1a hash function for strings (64-bit version).
+/// @note This function is C exported for assembly usage.
 EXTERN_C UInt64 hali_hash_fnv64(const Char* path) {
   if (!path || *path == 0) return 0;
 
