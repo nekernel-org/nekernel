@@ -28,7 +28,7 @@ namespace Ne::Kernel {
 using SemaphoreArr = UInt64[kSemaphoreCount];
 
 /// @brief Checks if the semaphore is valid.
-inline bool rtl_sem_is_valid(const SemaphoreArr& sem, const UInt64& owner = 0) {
+inline Bool rtl_sem_is_valid(const SemaphoreArr& sem, const UInt64& owner = 0) {
   //if (!sem) return false;
   return sem[kSemaphoreOwnerIndex] == owner && sem[kSemaphoreCountIndex] > 0;
 }
@@ -36,7 +36,7 @@ inline bool rtl_sem_is_valid(const SemaphoreArr& sem, const UInt64& owner = 0) {
 /// @brief Releases the semaphore, resetting its owner and count.
 /// @param sem
 /// @return
-inline bool rtl_sem_release(SemaphoreArr& sem) {
+inline Bool rtl_sem_release(SemaphoreArr& sem) {
   //if (!sem) return false;
 
   sem[kSemaphoreOwnerIndex] = 0;
@@ -49,7 +49,7 @@ inline bool rtl_sem_release(SemaphoreArr& sem) {
 /// @param sem the semaphore array to use.
 /// @param owner the owner to set, could be anything identifitable.
 /// @return
-inline bool rtl_sem_acquire(SemaphoreArr& sem, const UInt64& owner) {
+inline Bool rtl_sem_acquire(SemaphoreArr& sem, const UInt64& owner) {
   //if (!sem) return false;
 
   if (!owner) {
@@ -68,8 +68,8 @@ inline bool rtl_sem_acquire(SemaphoreArr& sem, const UInt64& owner) {
 /// @param timeout
 /// @param condition condition pointer.
 /// @return
-inline bool rtl_sem_wait(SemaphoreArr& sem, const UInt64& owner, const UInt64& timeout,
-                         bool& condition) {
+inline Bool rtl_sem_wait(SemaphoreArr& sem, const UInt64& owner, const UInt64& timeout,
+                         Bool& condition) {
   //if (!sem) return false;
 
   if (!rtl_sem_is_valid(sem, owner)) {
@@ -95,7 +95,7 @@ inline bool rtl_sem_wait(SemaphoreArr& sem, const UInt64& owner, const UInt64& t
   }
 
   HardwareTimer timer(timeout);
-  bool          ret = timer.Wait();
+  Bool          ret = timer.Wait();
 
   if (ret) {
     if (!condition) {
