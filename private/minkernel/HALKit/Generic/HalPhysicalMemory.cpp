@@ -57,11 +57,7 @@ Void pmmi_init(UIntPtr base, SizeT sz) {
 _Output UIntPtr pmmi_alloc_frame(Void) {
   UIntPtr frame = 0UL;
 
-  STATIC Bool kLocked = NO;
-
-  while (kLocked);
-
-  kLocked = YES;
+  STATIC std::atomic<Bool> kLocked = NO;
 
   if (Detail::kPmmFreeHead) {
     frame = Detail::kPmmFreeHead;
@@ -81,8 +77,6 @@ _Output UIntPtr pmmi_alloc_frame(Void) {
   --Detail::kPmmFree;
   ++Detail::kPmmUsed;
 
-  kLocked = NO;
-
   return frame;
 }
 
@@ -93,11 +87,7 @@ Void pmmi_free_frame(UIntPtr frame) {
 
   if (frame < Detail::kPmmBase || frame >= Detail::kPmmCursor) return;
 
-  STATIC Bool kLocked = NO;
-
-  while (kLocked);
-
-  kLocked = YES;
+  STATIC std::atomic<Bool> kLocked = NO;
 
   *reinterpret_cast<UIntPtr*>(frame) = Detail::kPmmFreeHead;
 
@@ -105,8 +95,6 @@ Void pmmi_free_frame(UIntPtr frame) {
 
   ++Detail::kPmmFree;
   --Detail::kPmmUsed;
-
-  kLocked = NO;
 }
 
 /// @brief Frames still available.

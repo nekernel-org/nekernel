@@ -6,7 +6,7 @@
 CXX			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -fshort-wchar -D__nekernel_dma_pool_start=0x1000000 -D__HALKIT_INCLUDES_BNID__=1 -D__nekernel_dma_pool_size=0x1000000 \
-				-D__nekernel_halkit_include_processor="<HALKit/AMD64/Processor.h>" -D__nekernel_max_cores=8 -c -D__NE_AMD64__ -D__NEOSKRNL__ -D__NE_VEPM__ -Wall -Wpedantic -Wextra -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__nekernel_dma_best_align=8 -D__FSKIT_INCLUDES_OPENHEFS__ -D__NE_SUPPORT_NX__ -O0 -I../vendor -D__NEKERNEL__ -D__HAVE_NE_API__ -D__FREESTANDING__ -D__NE_VIRTUAL_MEMORY_SUPPORT__ -D__NE_AUTO_FORMAT__ -D__NE__ -I./ -I../ -I../minloader
+				-D__nekernel_halkit_include_processor="<HALKit/AMD64/Processor.h>" -D__nekernel_max_cores=8 -c -D__NE_AMD64__ -D__NEOSKRNL__ -D__NE_VEPM__ -Wall -Wc++11-extensions -Wpedantic -Wextra -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__nekernel_dma_best_align=8 -D__FSKIT_INCLUDES_OPENHEFS__ -D__NE_SUPPORT_NX__ -O0 -I../vendor -D__NEKERNEL__ -D__HAVE_NE_API__ -D__FREESTANDING__ -D__NE_VIRTUAL_MEMORY_SUPPORT__ -D__NE_AUTO_FORMAT__ -D__NE__ -I./ -I../ -I../minloader
 
 ASM 		= nasm
 

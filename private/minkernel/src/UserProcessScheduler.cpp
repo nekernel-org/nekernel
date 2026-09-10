@@ -563,14 +563,9 @@ UserProcessTeam& UserProcessScheduler::TheCurrentTeam() {
 BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
   if (team.AsArray().Count() < 1ULL) return No;
 
-  STATIC Bool kLocked{NO};
-  while (kLocked);
-
-  kLocked = YES;
+  STATIC std::atomic<Bool> kLocked = NO;
 
   this->mTeam = team;
-
-  if (kLocked) kLocked = NO;
 
   return Yes;
 }

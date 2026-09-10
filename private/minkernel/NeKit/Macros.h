@@ -150,4 +150,6 @@
 
 #define RTL_INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
 
+#include <atomic>
+
 #endif
