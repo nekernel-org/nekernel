@@ -16,7 +16,11 @@
 #define SIGPAUS 2 /* pause */
 #define SIGEXEC 3 /* execute */
 #define SIGTRAP 4 /* trap */
+
+#ifndef SIGABRT
 #define SIGABRT 5 /* abort */
+#endif
+
 #define SIGCONT 6 /* continue */
 #define SIGSEG 7  /* process fault */
 #define SIGBREK 8

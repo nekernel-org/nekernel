@@ -14,25 +14,28 @@ EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64 level, cons
   if (!hash) return -1;
   if (!proc) return -1;
 
-  STATIC BOOL kLocked = NO;
+  STATIC std::atomic_flag kLocked = ATOMIC_FLAG_INIT;
 
-  // Wait until the lock is released.
-  while (kLocked);
-
-  kLocked = YES;
+  while (kLocked.test_and_set(std::memory_order_acquire));
 
   // Calculate the index in the system calls table based on the hash.
   auto i = hash % kMaxDispatchCallCount;
 
-  if (i > kMaxDispatchCallCount) return -1;
-  if (kRegisteredSystemCalls[i].fActive) return -1;
+  if (i > kMaxDispatchCallCount) {
+    kLocked.clear(std::memory_order_release);
+    return -1;
+  }
+  if (kRegisteredSystemCalls[i].fActive) {
+    kLocked.clear(std::memory_order_release);
+    return -1;
+  }
 
   kRegisteredSystemCalls[i].fHash      = hash;
   kRegisteredSystemCalls[i].fProc      = proc;
   kRegisteredSystemCalls[i].fActive    = YES;
   kRegisteredSystemCalls[i].fAuthLevel = level;
 
-  kLocked = NO;
+  kLocked.clear(std::memory_order_release);
 
   return -1;
 }
@@ -41,22 +44,26 @@ EXTERN_C SInt32 hali_add_entry(HAL::hal_proc_type proc, const UInt64 level, cons
 EXTERN_C Void hali_remove_entry(const UInt64 hash) {
   if (!hash) return;
 
-  STATIC BOOL kLocked = NO;
+  STATIC std::atomic_flag kLocked = ATOMIC_FLAG_INIT;
 
-  while (kLocked);
-
-  kLocked = YES;
+  while (kLocked.test_and_set(std::memory_order_acquire));
 
   // Calculate the index in the system calls table based on the hash.
   auto i = hash % kMaxDispatchCallCount;
 
-  if (i > kMaxDispatchCallCount) return;
-  if (kRegisteredSystemCalls[i].fHash != hash) return;
+  if (i > kMaxDispatchCallCount) {
+    kLocked.clear(std::memory_order_release);
+    return;
+  }
+  if (kRegisteredSystemCalls[i].fHash != hash) {
+    kLocked.clear(std::memory_order_release);
+    return;
+  }
 
   kRegisteredSystemCalls[i].fProc      = nullptr;
   kRegisteredSystemCalls[i].fHash      = 0;
   kRegisteredSystemCalls[i].fActive    = NO;
   kRegisteredSystemCalls[i].fAuthLevel = 0;
 
-  kLocked = NO;
+  kLocked.clear(std::memory_order_release);
 }
