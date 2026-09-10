@@ -32,11 +32,15 @@ EXTERN_C Int32 kt_kernel_task_start(HAL::StackFramePtr stack_frame, VoidPtr code
 Bool KernelTaskHelper::Start(KernelTask& task_ptr, const KID& kid) {
   if (!kid) return NO;
 
-  STATIC std::atomic<bool> kLocked = NO;
+  STATIC std::atomic_flag kLocked = ATOMIC_FLAG_INIT;
+
+  while (kLocked.test_and_set(std::memory_order_acquire));
 
   task_ptr.Kid = kid;
 
   auto ret = kt_kernel_task_start(task_ptr.StackFrame, task_ptr.Image.LeakImage().Leak().Leak());
+
+  kLocked.clear(std::memory_order_release);
 
   if (ret != kErrorSuccess) {
     err_local_get() = ret;

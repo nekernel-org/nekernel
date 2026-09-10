@@ -57,7 +57,9 @@ Void pmmi_init(UIntPtr base, SizeT sz) {
 _Output UIntPtr pmmi_alloc_frame(Void) {
   UIntPtr frame = 0UL;
 
-  STATIC std::atomic<Bool> kLocked = NO;
+  STATIC std::atomic_flag kLocked = ATOMIC_FLAG_INIT;
+
+  while (kLocked.test_and_set(std::memory_order_acquire));
 
   if (Detail::kPmmFreeHead) {
     frame = Detail::kPmmFreeHead;
@@ -69,6 +71,7 @@ _Output UIntPtr pmmi_alloc_frame(Void) {
   }
 
   if (!frame) {
+    kLocked.clear(std::memory_order_release);
     return 0UL;
   }
 
@@ -76,6 +79,8 @@ _Output UIntPtr pmmi_alloc_frame(Void) {
 
   --Detail::kPmmFree;
   ++Detail::kPmmUsed;
+
+  kLocked.clear(std::memory_order_release);
 
   return frame;
 }
@@ -87,7 +92,9 @@ Void pmmi_free_frame(UIntPtr frame) {
 
   if (frame < Detail::kPmmBase || frame >= Detail::kPmmCursor) return;
 
-  STATIC std::atomic<Bool> kLocked = NO;
+  STATIC std::atomic_flag kLocked = ATOMIC_FLAG_INIT;
+
+  while (kLocked.test_and_set(std::memory_order_acquire));
 
   *reinterpret_cast<UIntPtr*>(frame) = Detail::kPmmFreeHead;
 
@@ -95,6 +102,8 @@ Void pmmi_free_frame(UIntPtr frame) {
 
   ++Detail::kPmmFree;
   --Detail::kPmmUsed;
+
+  kLocked.clear(std::memory_order_release);
 }
 
 /// @brief Frames still available.

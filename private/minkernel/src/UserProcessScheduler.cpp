@@ -563,9 +563,13 @@ UserProcessTeam& UserProcessScheduler::TheCurrentTeam() {
 BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
   if (team.AsArray().Count() < 1ULL) return No;
 
-  STATIC std::atomic<Bool> kLocked = NO;
+  STATIC std::atomic_flag kLocked = ATOMIC_FLAG_INIT;
+
+  while (kLocked.test_and_set(std::memory_order_acquire));
 
   this->mTeam = team;
+
+  kLocked.clear(std::memory_order_release);
 
   return Yes;
 }
