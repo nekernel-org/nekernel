@@ -2,7 +2,7 @@
 
 # Ne.app Kernel
 
-The kernel module of the Ne.app NeSystem distribution.
+The kernel module of the Ne.app NeAnt distribution.
 
 ### Notice
 
