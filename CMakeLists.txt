@@ -11,6 +11,6 @@ execute_process(COMMAND ./scripts/release_ahci_x64.sh)
 elseif(DEFINED NEANT_DEBUG_PROFILE)
 
 message("NeAnt: Running debug AHCI build...")
-execute_process(COMMAND ./scripts/release_ahci_x64.sh)
+execute_process(COMMAND ./scripts/debug_ahci_x64.sh)
 
 endif()
