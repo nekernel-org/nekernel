@@ -33,7 +33,9 @@ Void mp_wakeup_thread(HAL::StackFrame* stack) {
   if (!hal_check_task(stack)) return;
 
   // RIP is always in R15. R15 is reserved for the RIP.
+  // SP is in R14 as well.
   stack->IP = stack->R15;
+  stack->SP = stack->R14;
 
   Ne::Kernel::UserProcessHelper::StartScheduling();
 }
