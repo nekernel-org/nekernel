@@ -31,4 +31,4 @@ EXAMPLES
         Schedules `/xml/hefs.pxml` to run at 2:30PM on Wednesday, April 2026.
 
 RELEASE
-    v1.0.0 — NeKernel.org
+    v1.0.0 — Ne.app

@@ -22,8 +22,11 @@
 ///! @author Amlal El Mahrouss (amlal@nekernel.org)
 
 namespace Ne::Kernel {
+  
 namespace HAL {
+
   namespace Detail {
+
     /***********************************************************************************/
     /// \brief Proxy Interface to manage a bitmap allocator.
     /***********************************************************************************/
@@ -191,5 +194,7 @@ namespace HAL {
 
     return ret;
   }
+
 }  // namespace HAL
+
 }  // namespace Ne::Kernel
