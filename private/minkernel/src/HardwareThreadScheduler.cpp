@@ -28,16 +28,19 @@ EXTERN_C Bool mp_register_task(HAL::StackFramePtr frame, ProcessID pid);
 /***********************************************************************************/
 ///! @brief C++ constructor.
 /***********************************************************************************/
+
 HardwareThread::HardwareThread() = default;
 
 /***********************************************************************************/
 ///! @brief C++ destructor.
 /***********************************************************************************/
+
 HardwareThread::~HardwareThread() = default;
 
 /***********************************************************************************/
 //! @brief returns the id of the thread.
 /***********************************************************************************/
+
 _Output const ThreadID& HardwareThread::ID() {
   return this->fID;
 }
@@ -45,6 +48,7 @@ _Output const ThreadID& HardwareThread::ID() {
 /***********************************************************************************/
 //! @brief returns the kind of thread we have.
 /***********************************************************************************/
+
 _Output const ThreadKind& HardwareThread::Kind() {
   return this->fKind;
 }
@@ -53,6 +57,7 @@ _Output const ThreadKind& HardwareThread::Kind() {
 //! @brief is the thread busy?
 //! @return whether the thread is busy or not.
 /***********************************************************************************/
+
 Bool HardwareThread::IsBusy() {
   return this->fBusy;
 }
@@ -66,9 +71,17 @@ HAL::StackFramePtr HardwareThread::StackFrame() {
   return this->fStack;
 }
 
+/***********************************************************************************/
+/// @brief Enables the busy field.
+/***********************************************************************************/
+
 Void HardwareThread::Busy(Bool busy) {
   this->fBusy = busy;
 }
+
+/***********************************************************************************/
+/// @brief Checks if the thread are available.
+/***********************************************************************************/
 
 HardwareThread::operator bool() {
   return this->fStack && !this->fBusy;
@@ -88,6 +101,7 @@ Void HardwareThread::Wake(const bool wakeup) {
 /// @retval true stack was changed, code is running.
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
+
 Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
   if (!frame) {
     return NO;
@@ -117,6 +131,7 @@ Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
 /***********************************************************************************/
 ///! @brief Tells if processor is waked up.
 /***********************************************************************************/
+
 bool HardwareThread::IsWakeup() {
   return this->fWakeup;
 }
@@ -155,6 +170,7 @@ HAL::StackFramePtr HardwareThreadScheduler::Leak() {
  * @return the reference to the hardware thread.
  */
 /***********************************************************************************/
+
 Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx) {
   if (idx > kMaxAPInsideSched) {
     STATIC HardwareThread* kFakeThread = nullptr;
@@ -171,6 +187,7 @@ Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx) {
  * @return
  */
 /***********************************************************************************/
+
 HardwareThreadScheduler::operator bool() {
   return !this->fThreadList.Empty();
 }
@@ -181,6 +198,7 @@ HardwareThreadScheduler::operator bool() {
  * @return
  */
 /***********************************************************************************/
+
 bool HardwareThreadScheduler::operator!() {
   return this->fThreadList.Empty();
 }
@@ -189,6 +207,7 @@ bool HardwareThreadScheduler::operator!() {
 /// @brief Returns the amount of core present.
 /// @return the number of APs.
 /***********************************************************************************/
+
 SizeT HardwareThreadScheduler::Capacity() {
   return this->fThreadList.Count();
 }

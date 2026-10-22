@@ -55,6 +55,14 @@ EXTERN_C IDylibRef rtl_init_dylib_pef(UserProcess& process) {
     return nullptr;
   }
 
+  if (!traits->ImageSz ||
+      !traits->ImageObject) {
+    tls_delete_class(dll_obj);
+    process.Crash();
+
+    return nullptr;
+  }
+
   traits->ImageObject = process.Image.LeakBlob().Leak().Leak();
   traits->ImageSz     = process.Image.LeakBlobSz();
 
@@ -87,7 +95,8 @@ EXTERN_C IDylibRef rtl_init_dylib_pef(UserProcess& process) {
 EXTERN_C Void rtl_fini_dylib_pef(UserProcess& process, IDylibRef dll_obj, BOOL* successful) {
   MUST_PASS(successful);
 
-  if (!successful) {
+  if (!successful) 
+  {
     return;
   }
 
@@ -97,8 +106,11 @@ EXTERN_C Void rtl_fini_dylib_pef(UserProcess& process, IDylibRef dll_obj, BOOL* 
     process.Crash();
   }
 
-  delete dll_obj->Get();
-  delete dll_obj;
+  if (dll_obj->Get()) 
+    delete dll_obj->Get();
+  
+  if (dll_obj) 
+    delete dll_obj;
 
   dll_obj = nullptr;
 

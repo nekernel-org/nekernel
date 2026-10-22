@@ -133,12 +133,12 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   Boot::BootTextWriter writer;
 
   if (!boot_init_fb()) {
-    writer.Write("BootZ: Invalid Framebuffer, can't boot to NeKernel.\r");
+    writer.Write("BootZ: Invalid framebuffer, can't boot to NeKernel.\r");
     Boot::Stop();
   }
 
   writer.Write(
-      "BootZ: The Ne.app NeKernel Loader. Copyright 2024-2026, Amlal El Mahrouss, Ne.app et al.\r");
+      "BootZ: The Ne.app NeAnt Loader. Copyright 2024-2026, Ne.app.\r");
 
   STATIC Bool kAcpiDetectedMandatory = FALSE;
 
@@ -255,7 +255,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   EfiInputKey key{};
 
-  ST->ConOut->OutputString(ST->ConOut, L"BootZ: Y for Memory Test or N to skip Memory Test...\r\n");
+  ST->ConOut->OutputString(ST->ConOut, L"BootZ: Y for Memory Test or N to skip the Memory Test...\r\n");
   ST->ConOut->OutputString(ST->ConOut, L"Choose? (Y/N)\r\n");
   ST->ConIn->Reset(ST->ConIn, TRUE);
 
@@ -320,7 +320,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   }
 
   // boot to kernel, if not bootnet this.
-
   Boot::BootFileReader reader_libsys(L"System.dll", image_handle);
   reader_libsys.ReadAll(0);
 

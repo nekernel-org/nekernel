@@ -86,7 +86,9 @@ voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len) {
 [[deprecated("Use rt_copy_memory_safe instead")]]
 #endif
 Int32 rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
+  if (!len) return 0;
   if (!src || !dst) return -1;
+  
   auto s = reinterpret_cast<const UInt8*>(src);
   auto d = reinterpret_cast<UInt8*>(dst);
 

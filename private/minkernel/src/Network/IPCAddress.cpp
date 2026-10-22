@@ -67,6 +67,7 @@ ErrorOrAny ipc_read_from_file(FileStreamASCII& fs, SizeT& len) {
   }
 
   flg.clear(std::memory_order_release);
+  
   /// @brief Check if canary has errors. In other words a bug check.
   MUST_PASS(fs.Read(kIPCTagName "__impCanary", 1).HasError() != YES);
 
