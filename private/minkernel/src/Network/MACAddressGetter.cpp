@@ -8,7 +8,7 @@
 namespace Ne::Kernel {
 
   Array<UInt8, kMACAddrLen>& MacAddressGetter::AsBytes() {
-  return this->fMacAddress;
-}
+    return this->fMacAddress;
+  }
 
 }  // namespace Ne::Kernel

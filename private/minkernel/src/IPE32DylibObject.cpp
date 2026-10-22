@@ -86,8 +86,11 @@ EXTERN_C Void rtl_fini_dylib_pe32(UserProcess& process, IDylibRef dll_obj, BOOL*
     process.Crash();
   }
 
-  delete dll_obj->Get();
-  delete dll_obj;
+  if (dll_obj->Get()) 
+    delete dll_obj->Get();
+  
+  if (dll_obj) 
+    delete dll_obj;
 
   dll_obj = nullptr;
 

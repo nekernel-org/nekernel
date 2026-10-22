@@ -2,11 +2,10 @@
 
 # Ne.app Kernel
 
-The kernel module of the Ne.app NeAnt distribution.
-
-### Notice
-
-NeKernel is not open to new contributors, unless you contributed to similar Ne.app modules and similar large scale open source projects. This is done to have the highest quality merge requests.
+> [!NOTE]
+> On Windows, you will need to use the setup link at:
+> `curl -fsSL http://setup.nekernel.org`.
+> Or `curl -fsSL http://install.nekernel.org` on POSIX platforms.
 
 ![License](https://img.shields.io/badge/LICENSE-Apache--2.0-blue.svg?style=for-the-badge)
 ![GitHub Repo Stars](https://img.shields.io/github/stars/ne-app-eu/krnl?style=for-the-badge)
@@ -16,7 +15,7 @@ NeKernel is not open to new contributors, unless you contributed to similar Ne.a
 <a href="https://github.com/ne-app-eu/krnl/actions/workflows/libddk-build.yml/badge.svg"><img src="https://github.com/ne-app-eu/krnl/actions/workflows/libddk-build.yml/badge.svg?style=for-the-badge" alt="CI 3"></a>
 <a href="https://github.com/ne-app-eu/krnl/actions/workflows/libsystem-build.yml/badge.svg"><img src="https://github.com/ne-app-eu/krnl/actions/workflows/libsystem-build.yml/badge.svg?style=for-the-badge" alt="CI 4"></a>
 
-The Modular Operating System Kernel module of NeAnt.
+The Modular Operating System Kernel for NeAnt.
 
 ## Getting Started
 
@@ -50,11 +49,11 @@ Join Ne.app's [User Group](https://discord.gg/uD76Qweght) to and chat with users
 
 ## Documentation
 
-- [Documentation](https://docs.src.nekernel.org/)
+The [Documentation](https://docs.src.nekernel.org/) is available, alongside with primers and wiki entries.
 
 ## Licensing
 
-Ne.app NeKernel is licensed under the [Apache-2.0 License](LICENSE.txt).
+Ne.app Kernel is licensed under the [Apache-2.0 License](LICENSE.txt).
 
 ---
 

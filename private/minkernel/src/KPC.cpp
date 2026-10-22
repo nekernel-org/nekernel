@@ -16,15 +16,15 @@ STATIC Bool kRaiseOnBugCheck = false;
 Boolean err_bug_check_raise(Void) {
   Char* ptr = new Char[512];
 
-  if (ptr == nullptr) goto bug_check_fail;
+  if (ptr == nullptr) goto err_bug_check_fail;
 
-  if (!mm_is_valid_ptr(ptr)) goto bug_check_fail;
+  if (!mm_is_valid_ptr(ptr)) goto err_bug_check_fail;
 
   if (ptr) delete[] ptr;
 
   return Yes;
 
-bug_check_fail:
+err_bug_check_fail:
   if (ptr) delete[] ptr;
 
   ptr = nullptr;

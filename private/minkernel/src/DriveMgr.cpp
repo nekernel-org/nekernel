@@ -19,6 +19,7 @@
 /***********************************************************************************/
 
 namespace Ne::Kernel {
+  
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 STATIC UInt16 kATAIO     = 0U;
 STATIC UInt8  kATAMaster = 0U;
@@ -152,6 +153,7 @@ DriveTrait io_construct_blank_drive() {
 }
 
 namespace Probe {
+
   Void io_detect_drive(DriveTrait& trait) {
     trait.fInit(trait.fPacket);
 
@@ -214,6 +216,7 @@ namespace Probe {
     trait.fPacket.fPacketSize    = 0UL;
     trait.fPacket.fPacketContent = nullptr;
   }
+
 }  // namespace Probe
 
 /// @brief Replacement for io_construct_main_drive that works with IMountpoint.
@@ -232,4 +235,5 @@ Void io_construct_main_drive(DriveTrait& trait) {
 
   Probe::io_detect_drive(trait);
 }
+
 }  // namespace Ne::Kernel
